@@ -56,6 +56,7 @@ dependencies {
     implementation ("io.ktor:ktor-client-content-negotiation:2.1.3")
     implementation ("io.ktor:ktor-serialization-kotlinx-json:2.1.3")
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
+    implementation ("jp.wasabeef:glide-transformations:4.3.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -2,26 +2,28 @@ package com.saransh.whosthatpokemon
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +33,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
@@ -51,6 +54,7 @@ fun Quiz(
     var isLoading by remember { mutableStateOf(true) }
     var options by remember { mutableStateOf<Set<String>>(emptySet()) }
     var feedbackMessage by remember { mutableStateOf<String?>(null) }
+    val isDarkTheme = isSystemInDarkTheme()
 
     LaunchedEffect(currentQuestion) {
         isLoading = true
@@ -59,7 +63,7 @@ fun Quiz(
         options = emptySet()
         try {
             // Fetch the correct Pokémon
-            val randomId = Random.nextInt(1, 1025) // IDs start from 1
+            val randomId = Random.nextInt(1, 1025)
             val correctPokemon = getPokemon(randomId, client)
             pokemon = correctPokemon
 
@@ -166,7 +170,21 @@ fun Quiz(
                     GlideImage(
                         model = pokemon?.sprites?.front_default,
                         contentDescription = "Pokemon Image",
-                        modifier = Modifier.size(200.dp).padding(bottom = 24.dp)
+                        modifier = Modifier.size(200.dp).padding(bottom = 24.dp),
+                        requestBuilderTransform = {
+                            if (difficulty.lowercase() == "medium") {
+                                it.transform(BlurTransformation(5, 1))
+                            } else {
+                                it
+                            }
+                        },
+                        colorFilter = when (difficulty.lowercase()) {
+                            "hard","very hard" -> ColorFilter.tint(
+                                if (isDarkTheme) Color.White else Color.Black,
+                                androidx.compose.ui.graphics.BlendMode.SrcIn
+                            )
+                            else -> null
+                        }
                     )
                 } else {
                     Text(text = "Error loading Pokémon", fontSize = 18.sp)
@@ -197,7 +215,12 @@ fun Quiz(
                             .padding(vertical = 8.dp),
                         enabled = selectedAnswer == null && !isLoading // Disable during loading or after selection
                     ) {
-                        Text(text = option.capitalize(), fontSize = 18.sp)
+                        val displayText = if (difficulty.lowercase() == "very hard") {
+                            scrambleSentence(option)
+                        } else {
+                            option
+                        }
+                        Text(text = displayText.capitalize(), fontSize = 18.sp)
                     }
                 }
             }
@@ -228,5 +251,16 @@ fun saveHighScore(context: Context, difficulty: String, score: Int) {
     val editor = scores.edit()
     if (scores.getInt(difficulty,0) < score)
     editor.putInt(difficulty, score)
-    editor.apply() // or commit() for synchronous save
+    editor.apply()
+}
+
+fun scrambleWord(word: String): String {
+    if (word.length <= 3) return word // too short to scramble
+    val middle = word.substring(1, word.length - 1).toCharArray()
+    middle.shuffle(Random(System.currentTimeMillis()))
+    return "${word.first()}${middle.concatToString()}${word.last()}"
+}
+
+fun scrambleSentence(sentence: String): String {
+    return sentence.split(" ","-").joinToString(" ") { scrambleWord(it) }
 }

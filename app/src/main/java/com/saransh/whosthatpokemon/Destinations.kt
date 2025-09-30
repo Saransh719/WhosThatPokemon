@@ -19,3 +19,7 @@ object Medium : Destinations{
 object Hard : Destinations{
     override val route = "hard"
 }
+
+object VeryHard : Destinations{
+    override val route = "very hard"
+}

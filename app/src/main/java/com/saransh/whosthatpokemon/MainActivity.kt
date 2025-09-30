@@ -1,6 +1,5 @@
 package com.saransh.whosthatpokemon
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,7 +31,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 val context = LocalContext.current
-                val scores = context.getSharedPreferences("scores", Context.MODE_PRIVATE)
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(navController = navController, startDestination = Home.route)
                     {
@@ -46,11 +44,15 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Medium.route)
                         {
-                            //TODO
+                            Quiz("Medium",client,context,navController)
                         }
                         composable(Hard.route)
                         {
-                            //TODO
+                            Quiz("Hard",client,context,navController)
+                        }
+                        composable(VeryHard.route)
+                        {
+                            Quiz("Very Hard",client,context,navController)
                         }
                     }
                 }
