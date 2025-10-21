@@ -1,5 +1,6 @@
 package com.saransh.whosthatpokemon
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -56,26 +57,42 @@ fun Quiz(
     var feedbackMessage by remember { mutableStateOf<String?>(null) }
     val isDarkTheme = isSystemInDarkTheme()
 
+    val prefs = context.getSharedPreferences("gen",Context.MODE_PRIVATE)
+    val selections = (1..9).associateWith { prefs.getBoolean("$it", true) }
+    val genRanges = mapOf(
+        1 to 1..151,
+        2 to 152..251,
+        3 to 252..386,
+        4 to 387..494,
+        5 to 495..649,
+        6 to 650..721,
+        7 to 722..809,
+        8 to 810..905,
+        9 to 906..1025
+    )
+    val valid_gen = selections.filter{it.value}.keys
     LaunchedEffect(currentQuestion) {
         isLoading = true
         selectedAnswer = null
         feedbackMessage = null
         options = emptySet()
         try {
+            val selected_gen_range = genRanges[valid_gen.random()]
             // Fetch the correct Pokémon
-            val randomId = Random.nextInt(1, 1025)
-            val correctPokemon = getPokemon(randomId, client)
+            val randomId = selected_gen_range?.let { Random.nextInt(it.first,it.last ) }
+            val correctPokemon = randomId?.let { getPokemon(it, client) }
             pokemon = correctPokemon
 
             // Generate options
             val optionSet = mutableSetOf<String>()
-            correctPokemon.forms.firstOrNull()?.name?.let { optionSet.add(it) }
+            correctPokemon?.name?.let{optionSet.add(it)}
             while (optionSet.size < 4) {
-                val wrongId = Random.nextInt(1, 1025)
+                val wrongId = selected_gen_range?.let { Random.nextInt(it.first,it.last ) }
                 if (wrongId != randomId) {
-                    val wrongPokemon = getPokemon(wrongId, client)
-                    wrongPokemon.forms.firstOrNull()?.name?.let { optionSet.add(it) }
+                    val wrongPokemon = wrongId?.let { getPokemon(it, client) }
+                    wrongPokemon?.name?.let { optionSet.add(it) }
                 }
+
             }
             options = optionSet.shuffled().toSet() // Shuffle and convert to Set
         } catch (e: Exception) {
@@ -195,12 +212,12 @@ fun Quiz(
                     Button(
                         onClick = {
                             selectedAnswer = option
-                            val isCorrect = option == pokemon?.forms?.firstOrNull()?.name
+                            val isCorrect = option == (pokemon?.name ?: "")
                             val message = if (isCorrect) {
                                 score++
                                 "Correct!"
                             } else {
-                                "Incorrect! The answer was ${pokemon?.forms?.firstOrNull()?.name}"
+                                "Incorrect! The answer was ${pokemon?.name}"
                             }
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                             if (currentQuestion == totalQuestions) {
@@ -230,22 +247,19 @@ fun Quiz(
 
 @Serializable
 data class PokemonResponse(
-    val forms: List<Form>,
+    val name: String,
     val sprites: Sprites
 )
 @Serializable
 data class Sprites(
     val front_default: String
 )
-@Serializable
-data class Form(
-    val name :String
-)
 
 suspend fun getPokemon(id: Int, client: HttpClient): PokemonResponse {
     return client.get("https://pokeapi.co/api/v2/pokemon/$id").body()
 }
 
+@SuppressLint("SuspiciousIndentation")
 fun saveHighScore(context: Context, difficulty: String, score: Int) {
     val scores = context.getSharedPreferences("scores", Context.MODE_PRIVATE)
     val editor = scores.edit()
