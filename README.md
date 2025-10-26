@@ -10,11 +10,13 @@ Pokémon Quiz is a fan-made mobile quiz app that tests your knowledge of Pokémo
 
 🖼️ Pokémon images for each question
 
+Able to select generation depending on your pokemon knowledge
+
 Medium difficulty: blurred images
 
-Very Hard difficulty: blacked-out images
+Hard difficulty : blacked-out images
 
-🔀 Scrambled Pokémon names in Very Hard mode
+Very Hard difficulty: Scrambled Pokemon Names
 
 💾 All data stored locally on the device
 
@@ -24,6 +26,7 @@ Very Hard difficulty: blacked-out images
 
 <img src="ss/Home.jpg" width="200"/><img src="ss/Disclaimer.jpg" width="200"/><img src="ss/Easy.jpg" width="200"/>
 <img src="ss/Medium.jpg" width="200"/><img src="ss/Hard.jpg" width="200"/><img src="ss/VHard.jpg" width="200"/><img src="ss/End.jpg" width="200"/>
+<img src="ss/Settings.jpg" width="200"/>
 
 
 ## Installation
