@@ -61,7 +61,7 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavHostController, co
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Pokémon Quiz",
+                    text = "Monster Quiz",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
                 )

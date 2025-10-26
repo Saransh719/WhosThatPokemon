@@ -130,7 +130,7 @@ fun Quiz(
                 )
                 Text(
                     text = when {
-                        score == 10 -> "Excellent! You're a Pokémon Master!"
+                        score == 10 -> "Excellent! You're a Master!"
                         score >= 7 -> "Good effort! Keep training!"
                         else -> "Try again to catch 'em all!"
                     },
@@ -186,7 +186,7 @@ fun Quiz(
                 } else if (pokemon != null) {
                     GlideImage(
                         model = pokemon?.sprites?.front_default,
-                        contentDescription = "Pokemon Image",
+                        contentDescription = "Monster Image",
                         modifier = Modifier.size(200.dp).padding(bottom = 24.dp),
                         requestBuilderTransform = {
                             if (difficulty.lowercase() == "medium") {

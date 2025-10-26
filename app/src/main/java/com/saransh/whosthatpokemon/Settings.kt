@@ -50,7 +50,7 @@ fun Settings(context: Context, innerPadding: PaddingValues) {
     ) {
         item {
             Text(
-                text = "Select Pokémon Generation(s)",
+                text = "Select Monster Generation(s)",
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
