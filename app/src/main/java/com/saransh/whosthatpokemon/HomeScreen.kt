@@ -79,7 +79,7 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavHostController, co
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(bottom = 32.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
 
             DifficultyButton("Easy",scores,enabled = true) {
