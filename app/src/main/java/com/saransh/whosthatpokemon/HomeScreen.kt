@@ -132,8 +132,6 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavHostController, co
 
                             We do not claim ownership of any Pokémon-related intellectual property. If you are the copyright holder of any content used in this app and would like it removed, please contact us, and we will promptly comply with your request.
                             Email- saranshsapra08@gmail.com
-                            
-                            Logo by amitlu89 on DeviantArt
                         """.trimIndent(),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
